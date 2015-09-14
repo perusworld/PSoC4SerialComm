@@ -76,6 +76,13 @@ void SerialDataEnd()
     SerialWriteChar(COMM_EOM_SECOND);
 }
 
+void SerialSendDataByte(unsigned long data) 
+{
+    SerialDataBegin();
+    SerialWriteChar(data);
+    SerialDataEnd();
+}
+
 void SerialSendData(unsigned long* data, unsigned long len)
 {
     SerialDataBegin();
