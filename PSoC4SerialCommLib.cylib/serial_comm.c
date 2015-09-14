@@ -27,7 +27,7 @@ unsigned short ms_count = 0;
                     if (COMM_PING_IN == buf[0]) {
                         SerialPingOut();
                     } else if (COMM_DATA == buf[0]) {
-                        onMsgPtr(buf, buf_len);
+                        onMsgPtr(buf, buf_len - 2);
                     }
                 }
                 buf_len = 0;
@@ -44,19 +44,19 @@ unsigned short ms_count = 0;
 
 #endif 
 
-void MilliSecondsTimerPing() 
+void SerialSecondsTimerPing() 
+{
+    if (FALSE == in_sync) {
+        SerialPingIn();
+    }
+}
+
+void SerialMilliSecondsTimerPing() 
 {
     ms_count++;
     if(ms_count == 1000) { // 1 second
         ms_count = 0;
-        SecondsTimerPing();
-    }
-}
-
-void SecondsTimerPing() 
-{
-    if (FALSE == in_sync) {
-        SerialPingIn();
+        SerialSecondsTimerPing();
     }
 }
 

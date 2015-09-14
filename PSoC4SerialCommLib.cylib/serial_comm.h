@@ -1,7 +1,7 @@
 #if !defined(serial_comm_H)
     #define serial_comm_H
         
-    #include "options.h"
+    #include "serial_options.h"
 
     #define COMM_MODE_BYTE
     //#define COMM_MODE_CHAR
@@ -27,12 +27,12 @@
         typedef void (*ON_MSG)(char*, uint8);
     #endif
     
-    void MilliSecondsTimerPing();
+    void SerialMilliSecondsTimerPing();
     unsigned long SerialReadChar();
     void SerialWriteChar(unsigned long ch);
     void SerialWriteString(const char str[]);
 
-    void SecondsTimerPing();
+    void SerialSecondsTimerPing();
     void SerialInit(ON_MSG onMessage);
     void SerialPingOut();
     void SerialPingIn();
