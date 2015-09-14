@@ -27,12 +27,10 @@
         typedef void (*ON_MSG)(char*, uint8);
     #endif
     
-    void SerialMilliSecondsTimerPing();
     unsigned long SerialReadChar();
     void SerialWriteChar(unsigned long ch);
     void SerialWriteString(const char str[]);
 
-    void SerialSecondsTimerPing();
     void SerialInit(ON_MSG onMessage);
     void SerialPingOut();
     void SerialPingIn();
@@ -43,5 +41,120 @@
     void SerialSendBytes(unsigned long* data, unsigned long len);
     void SerialSendString(const char data[]);
     void SerialReadIncoming();
+
+unsigned short ms_count = 0;
+unsigned long in_sync = FALSE;
+ON_MSG onMsgPtr;
+
+
+void SerialSecondsTimerPing() 
+{
+    if (FALSE == in_sync) {
+        SerialPingIn();
+    }
+}
+
+void SerialMilliSecondsTimerPing() 
+{
+    ms_count++;
+    if(ms_count == 1000) { // 1 second
+        ms_count = 0;
+        SerialSecondsTimerPing();
+    }
+}
+
+void SerialDataBegin()
+{
+    SerialWriteChar(COMM_DATA);
+}
+
+void SerialDataEnd()
+{
+    SerialWriteChar(COMM_EOM_FIRST);
+    SerialWriteChar(COMM_EOM_SECOND);
+}
+
+void SerialSendDataByte(unsigned long data) 
+{
+    SerialDataBegin();
+    SerialWriteChar(data);
+    SerialDataEnd();
+}
+
+void SerialSendData(unsigned long* data, unsigned long len)
+{
+    SerialDataBegin();
+    SerialSendBytes(data, len);
+    SerialDataEnd();
+}
+
+void SerialSendBytes(unsigned long* data, unsigned long len)
+{
+    if (0 < len) {
+        unsigned long index;
+        index = 0u;
+        while(index < len)
+        {
+            SerialWriteChar(data[index]);
+            index++;
+        }
+    }
+}
+
+void SerialSendString(const char data[])
+{
+    SerialWriteString(data);
+}
+
+void SerialPingOut() 
+{
+    in_sync = TRUE;
+    SerialWriteChar(COMM_PING_OUT);
+    SerialDataEnd();
+}
+
+void SerialPingIn()
+{
+    SerialWriteChar(COMM_PING_IN);
+    SerialDataEnd();
+}
+
+void SerialInit(ON_MSG onMessage)
+{
+    onMsgPtr = onMessage;
+}
+
+#ifdef COMM_MODE_BYTE
+    
+    unsigned long buf[COMM_BUF_LEN];
+    unsigned long buf_cmd = 0u;
+    unsigned long buf_prev = 0u;
+    unsigned long buf_curr = 0u;
+    unsigned long buf_len = 0;
+
+    void SerialReadIncoming()
+    {
+        unsigned long ch;
+        ch = SerialReadChar();
+        
+        if (0u != ch) 
+        {
+            buf_prev = buf_curr;
+            buf_curr = ch;
+            buf[buf_len++] = ch;
+            if (COMM_EOM_FIRST == buf_prev && COMM_EOM_SECOND == buf_curr) {
+                if (NULL != onMsgPtr) {
+                    if (COMM_PING_IN == buf[0]) {
+                        SerialPingOut();
+                    } else if (COMM_DATA == buf[0]) {
+                        onMsgPtr(buf, buf_len - 2);
+                    }
+                }
+                buf_len = 0;
+            }
+        }
+    }
+
+#endif 
 
 #endif /* serial_comm_H */
