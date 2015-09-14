@@ -1,6 +1,6 @@
 #include <project.h>
 
-#include "serial_options.h"
+#include "serial_comm_options.h"
 
 int main()
 {

@@ -1,5 +1,5 @@
-#if !defined(options_H)
-#define options_H
+#if !defined(serial_options_H)
+#define serial_options_H
 
     #if !defined(NO)
         #define NO                          (0u)
@@ -27,4 +27,4 @@
         #define NULL ((void *)0)
     #endif
     
-#endif /* options_H */
+#endif /* serial_options_H */

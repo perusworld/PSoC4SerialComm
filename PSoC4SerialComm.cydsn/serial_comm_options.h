@@ -1,5 +1,5 @@
-#if !defined(serial_options_H)
-    #define serial_options_H
+#if !defined(serial_comm_options_H)
+    #define serial_comm_options_H
 
     #include <project.h>
     #include <serial_comm.h>
@@ -39,4 +39,4 @@
         SERIAL_UartPutString(str);
     }
 
-#endif /* serial_options_H */
+#endif /* serial_comm_options_H */
