@@ -38,6 +38,7 @@
     void SerialPingIn();
     void SerialDataBegin();
     void SerialDataEnd();
+    void SerialSendData(unsigned long* data, unsigned long len);
     void SerialSendBytes(unsigned long* data, unsigned long len);
     void SerialSendString(const char data[]);
     void SerialReadIncoming();
