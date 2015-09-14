@@ -131,10 +131,12 @@ void SerialInit(ON_MSG onMessage)
     unsigned long buf_prev = 0u;
     unsigned long buf_curr = 0u;
     unsigned long buf_len = 0;
+    unsigned long data[COMM_BUF_LEN];
 
     void SerialReadIncoming()
     {
         unsigned long ch;
+        unsigned long index = 0;
         ch = SerialReadChar();
         
         if (0u != ch) 
@@ -147,7 +149,10 @@ void SerialInit(ON_MSG onMessage)
                     if (COMM_PING_IN == buf[0]) {
                         SerialPingOut();
                     } else if (COMM_DATA == buf[0]) {
-                        onMsgPtr(buf, buf_len - 2);
+                        for(index=1;index < buf_len-2;index++) {
+                            data[index-1] = buf[index];
+                        }
+                        onMsgPtr(data, buf_len - 3);
                     }
                 }
                 buf_len = 0;
