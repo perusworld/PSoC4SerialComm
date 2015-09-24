@@ -13,6 +13,7 @@
     #define COMM_DATA           (0XEE)
     #define COMM_EOM_FIRST      (0XFE)
     #define COMM_EOM_SECOND     (0XFF)
+    #define COMM_ZERO_BYTE      (0XFD)
 
     #ifdef COMM_MODE_BYTE
         typedef void (*ON_MSG)(unsigned long*, unsigned long);
@@ -141,6 +142,9 @@ void SerialInit(ON_MSG onMessage)
         
         if (0u != ch) 
         {
+            if (COMM_ZERO_BYTE == ch) {
+                ch = 0;
+            }
             buf_prev = buf_curr;
             buf_curr = ch;
             buf[buf_len++] = ch;
